@@ -221,7 +221,7 @@
                     </executions>
                     <configuration>
                         <serverId>deployment</serverId>
-                        <nexusUrl>http://10.23.13.72:30015/repository/maven-central/>
+                        <nexusUrl>http://10.23.7.181:30015>
                         <skipStaging>true</skipStaging>
                     </configuration>
                 </plugin>

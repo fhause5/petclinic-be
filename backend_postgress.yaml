@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: snap032/backend:25
+        image: snap032/backend:26
         ports:
           - containerPort: 8080
         envFrom:

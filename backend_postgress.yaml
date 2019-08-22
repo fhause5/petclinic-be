@@ -1,0 +1,133 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata:
+ name: backend
+ labels:
+     app: backend
+     type: backend 
+spec:
+  template:
+    metadata:
+     name: backend
+     labels:
+        app: backend
+        type: backend
+    spec:
+      containers:
+      - name: backend
+        image: snap032/backend:25
+        ports:
+          - containerPort: 8080
+        envFrom:
+          - configMapRef:
+              name: postgres-config
+
+  replicas: 1
+  selector:
+     matchLabels:
+        type: backend
+  strategy:
+    type: Recreate
+
+---
+
+apiVersion: v1 
+kind: Service 
+metadata:
+    name: service-backend 
+spec:
+    type: NodePort
+    ports:
+     - targetPort: 8080
+       port: 8080
+       nodePort: 30016
+    selector:
+       app: backend
+       type: backend
+    sessionAffinity: None
+    type: NodePort
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: postgresdb
+  POSTGRES_USER: postgresadmin
+  POSTGRES_PASSWORD: admin123
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-pv-volume
+  labels:
+    type: local
+    app: postgres
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /data/postgresql/
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:10.4
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  type: NodePort
+  ports:
+   - port: 5432
+  selector:
+   app: postgres

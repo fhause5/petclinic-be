@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: snap032/backend:26
+        image: snap032/backend:latest
         env:
          - name: PETCLINIC_JDBC_URL
            value: jdbc:postgresql://postgresql/petclinic
@@ -34,7 +34,7 @@ spec:
          - name: POSTGRES_USER
            value: root
 
-  replicas: 1
+  replicas: 3
   selector:
      matchLabels:
         type: backend

@@ -15,12 +15,24 @@ spec:
     spec:
       containers:
       - name: backend
-        image: snap032/backend:latest
-        ports:
-          - containerPort: 8080
-        envFrom:
-          - configMapRef:
-              name: postgres-config
+        image: snap032/backend:26
+        env:
+         - name: PETCLINIC_JDBC_URL
+           value: jdbc:postgresql://postgresql/petclinic
+         - name: PETCLINIC_JDBC_USER
+           value: root
+         - name: PETCLINIC_JDBC_PASSWORD
+           value: org.hibernate.dialect.PostgreSQLDialect
+         - name: PETCLINIC_JDBC_DIALECT
+           value: org.hibernate.dialect.PostgreSQLDialect
+         - name: POSTGRES_PASSWORD
+           value: root
+         - name: POSTGRES_DB
+           value: postgres
+         - name: POSTGRES_DATABASE
+           value: postgres
+         - name: POSTGRES_USER
+           value: root
 
   replicas: 1
   selector:
@@ -28,7 +40,6 @@ spec:
         type: backend
   strategy:
     type: Recreate
-
 ---
 
 apiVersion: v1 
@@ -46,4 +57,3 @@ spec:
        type: backend
     sessionAffinity: None
     type: NodePort
-

@@ -7,5 +7,5 @@ FROM openjdk:8u171-jre-alpine
 WORKDIR /tmp
 COPY --from=0 /app/target/*.jar /tmp
 EXPOSE 8080
-CMD ["java", "-jar", "/tmp/petclinic.jar"]
+CMD ["java", "-jar", "/tmp/petclinic.jar", "-Dspring.profiles.active=osenv"]
 

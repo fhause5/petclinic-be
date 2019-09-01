@@ -6,6 +6,9 @@ FROM openjdk:8u171-jre-alpine
 
 WORKDIR /tmp
 COPY --from=0 /app/target/*.jar /tmp
-EXPOSE 8080
-CMD ["java", "-jar", "/tmp/petclinic.jar", "-Dspring.profiles.active=osenv"]
+#EXPOSE 8080
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/tmp/petclinic.jar"]
 
+
+
+#CMD ["java", "-jar", "/tmp/petclinic.jar", "-Dspring.profiles.active=osenv"]
